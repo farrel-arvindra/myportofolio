@@ -1,5 +1,7 @@
-Nama : Burhan
+Nama : Maulana Farrel Arvindra
 
-NPM : 2206000000
+NPM : 2506552802
 
-Kelas : PBP A
+Kelas : PBP F
+
+Program Studi: Sistem Informasi
