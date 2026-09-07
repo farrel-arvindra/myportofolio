@@ -14,6 +14,10 @@ My friends are saying shout up Jenny just yet in the cupba I just want to be lik
   --radius: 4px;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
@@ -21,12 +25,15 @@ body {
   line-height: 1.6;
 }
 
-h1,
-.brand {
+h1 {
   font-family:
     "Space Grotesk",
     -apple-system,
     sans-serif;
+}
+
+.brand {
+  font-family: 'Fira Code';
 }
 
 .container {
@@ -177,42 +184,82 @@ h1,
    Interests Section Styles
    ========================================= */
 
+/* =========================================
+   Interests Section Styles (Marquee)
+   ========================================= */
+
 .interests-container {
-  /* Mengaplikasikan font Fira Code untuk seluruh section ini */
-  font-family: "Fira Code", monospace;
-  padding: 2rem 0 4rem;
+  padding: 4rem 0;
+  overflow: hidden; 
+}
+
+.interest-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
 }
 
 .interest-title {
-  /* Meletakkan teks judul di tengah */
-  text-align: center;
+  font-size: 2.5rem;
   margin-bottom: 2rem;
+  text-align: center;
+  color: var(--ink);
+  font-family: 'Fira Code', monospace;
 }
 
-.interests {
-  /* Menghilangkan bullet point bawaan ul */
-  list-style-type: none;
-  
-  /* Menggunakan flexbox untuk membuat item berjajar horizontal */
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  /* Membuat efek memudar (fade) di ujung kiri dan kanan */
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* Pembungkus untuk kedua kelompok track */
+.carousel-track-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center; /* Memposisikan list ke tengah */
-  gap: 1rem; /* Memberikan jarak antar kotak list */
+  width: max-content;
+  gap: 1.5rem;
 }
 
-.interests li {
-  /* Menambahkan border di setiap item */
-  border: 1.5px solid var(--ink); 
+/* Setiap kelompok berjalan dengan animasi yang sama */
+.carousel-track {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
   
-  /* Memberikan ruang bernapas di dalam border */
-  padding: 0.5rem 1rem;
-  
-  /* Membuat sudut sedikit membulat sesuai tema */
+  /* Animasi bergerak terus menerus ke kiri */
+  animation: scroll-left 40s linear infinite;
+}
+
+.carousel-item {
+  flex: 0 0 250px; /* Ukuran statis agar kotak sama besar dan tidak mengecil */
+  border: 1.5px solid var(--ink);
+  padding: 2.5rem 1.5rem;
   border-radius: var(--radius);
-  
-  /* Opsional: memberi gaya tambahan agar terlihat rapi */
   background-color: transparent;
-  font-size: 0.9rem;
+  color: var(--ink);
+  font-family: 'Fira Code', monospace;
+  font-weight: 500;
+  font-size: 1.2rem;
+  text-align: center;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================
+   KEYFRAMES (Logika Pergerakan Animasi)
+========================================= */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Menggeser sepanjang lebar satu track ditambah lebar gap (1.5rem) */
+    transform: translateX(calc(-100% - 1.5rem));
+  }
 }
 
 .site-footer {

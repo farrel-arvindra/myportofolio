@@ -17,6 +17,7 @@
             <a href="#profile" class="brand">Farrel</a>
             <nav>
                 <a href="#profile">Profile</a>
+                <a href="#myInterests">Interests</a>
             </nav>
         </div>
     </header>
@@ -52,16 +53,34 @@
                 </div>
             </div>
         </section>
-        <section class="interests-container">
-            <h2 class="interest-title">Interests</h2>
-            <ul class="interests">
-                <li>Baca kartun</li>
-                <li>Nonton komik</li>
-                <li>Main catur di kopdes</li>
-                <li>Beli kopi</li>
-                <li>Liat video mukbang</li>
-                <li>Menanam pohon sawit</li>
-            </ul>
+        <section class="interests-container", id="myInterests">
+            <div class="interest-wrapper"> 
+                <h2 class="interest-title">Interests</h2>
+                
+                <div class="carousel-container">
+                    <div class="carousel-track-container">
+                        <!-- KELOMPOK 1 -->
+                        <ul class="carousel-track">
+                            <li class="carousel-item">Baca kartun</li>
+                            <li class="carousel-item">Nonton komik</li>
+                            <li class="carousel-item">Main catur di kopdes</li>
+                            <li class="carousel-item">Beli kopi</li>
+                            <li class="carousel-item">Liat video mukbang</li>
+                            <li class="carousel-item">Menanam pohon sawit</li>
+                        </ul>
+                        
+                        <!-- KELOMPOK 2 (Duplikat untuk efek seamless) -->
+                        <ul class="carousel-track" aria-hidden="true">
+                            <li class="carousel-item">Baca kartun</li>
+                            <li class="carousel-item">Nonton komik</li>
+                            <li class="carousel-item">Main catur di kopdes</li>
+                            <li class="carousel-item">Beli kopi</li>
+                            <li class="carousel-item">Nonton mio'ok</li>
+                            <li class="carousel-item">Menanam pohon sawit</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
