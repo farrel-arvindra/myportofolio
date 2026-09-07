@@ -1,4 +1,4 @@
-* {
+My friends are saying shout up Jenny just yet in the cupba I just want to be like the barring girl than more than gold and diamond* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -171,6 +171,48 @@ h1,
   object-fit: cover;
   border-radius: var(--radius);
   border: 3px solid var(--ink);
+}
+
+/* =========================================
+   Interests Section Styles
+   ========================================= */
+
+.interests-container {
+  /* Mengaplikasikan font Fira Code untuk seluruh section ini */
+  font-family: "Fira Code", monospace;
+  padding: 2rem 0 4rem;
+}
+
+.interest-title {
+  /* Meletakkan teks judul di tengah */
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.interests {
+  /* Menghilangkan bullet point bawaan ul */
+  list-style-type: none;
+  
+  /* Menggunakan flexbox untuk membuat item berjajar horizontal */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Memposisikan list ke tengah */
+  gap: 1rem; /* Memberikan jarak antar kotak list */
+}
+
+.interests li {
+  /* Menambahkan border di setiap item */
+  border: 1.5px solid var(--ink); 
+  
+  /* Memberikan ruang bernapas di dalam border */
+  padding: 0.5rem 1rem;
+  
+  /* Membuat sudut sedikit membulat sesuai tema */
+  border-radius: var(--radius);
+  
+  /* Opsional: memberi gaya tambahan agar terlihat rapi */
+  background-color: transparent;
+  font-size: 0.9rem;
 }
 
 .site-footer {
