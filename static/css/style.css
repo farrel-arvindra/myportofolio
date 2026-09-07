@@ -5,13 +5,13 @@ My friends are saying shout up Jenny just yet in the cupba I just want to be lik
 }
 
 :root {
-  --ink: #1c1917;
-  --paper: #faf6f0;
-  --accent: #d95d39;
-  --accent-dark: #a8442a;
-  --line: #e3d9c9;
-  --text-muted: #6b6459;
-  --radius: 4px;
+  --ink: #F3F4F6;           /* Putih terang/abu kebiruan untuk teks */
+  --paper: #121212;         /* Hitam obsidian/abu-abu sangat gelap */
+  --brand: #9B3B48;         /* Burgundy diterangkan sedikit agar tidak tenggelam di background gelap */
+  --brand-hover: #B84756;   
+  --line: #333333;          /* Garis batas abu-abu gelap */
+  --text-muted: #9CA3AF;
+  --radius: 8px;
 }
 
 html {
@@ -34,6 +34,7 @@ h1 {
 
 .brand {
   font-family: 'Fira Code';
+  color: var(--brand);
 }
 
 .container {
@@ -96,7 +97,7 @@ h1 {
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent-dark);
+  color: var(--brand  );
   font-weight: 700;
   margin-bottom: 0.75rem;
 }
@@ -142,14 +143,16 @@ h1 {
   font-weight: 600;
   text-decoration: none;
   color: var(--paper);
-  background-color: var(--ink);
+  background-color: var(--brand); /* Tombol berwarna Burgundy */
+  border: 1px solid var(--brand);
   border-radius: var(--radius);
   padding: 0.5rem 1.1rem;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .social-link:hover {
-  background-color: var(--accent);
+  background-color: var(--brand-hover); /* Sedikit lebih gelap saat disorot */
+  border-color: var(--brand-hover);
 }
 
 .hero-photo {
@@ -164,7 +167,7 @@ h1 {
   left: 1.25rem;
   width: 100%;
   height: 100%;
-  background-color: var(--accent);
+  background-color: var(--brand); /* Kotak bayangan foto menjadi Burgundy */
   border-radius: var(--radius);
   z-index: 0;
 }
@@ -191,6 +194,7 @@ h1 {
 .interests-container {
   padding: 4rem 0;
   overflow: hidden; 
+  color: var(--brand);
 }
 
 .interest-wrapper {
@@ -202,7 +206,6 @@ h1 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
   text-align: center;
-  color: var(--ink);
   font-family: 'Fira Code', monospace;
 }
 
@@ -234,11 +237,10 @@ h1 {
 
 .carousel-item {
   flex: 0 0 250px; /* Ukuran statis agar kotak sama besar dan tidak mengecil */
-  border: 1.5px solid var(--ink);
+  border: 1.5px solid var(--brand);
   padding: 2.5rem 1.5rem;
   border-radius: var(--radius);
   background-color: transparent;
-  color: var(--ink);
   font-family: 'Fira Code', monospace;
   font-weight: 500;
   font-size: 1.2rem;
