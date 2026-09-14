@@ -1,8 +1,10 @@
+from datetime import datetime, timezone as dt_timezone
+
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from main.models import Experience
+from main.models import Experience, Interest
 
 
 class MainTest(TestCase):
@@ -11,6 +13,11 @@ class MainTest(TestCase):
             title="Asisten Dosen PBP",
             description="Membantu mahasiswa memahami pengembangan web.",
             category="part-time",
+        )
+        self.interest = Interest.objects.create(
+            title="Machine Learning",
+            description="Mempelajari model predictive analytics dan pengembangan AI.",
+            since=datetime(2024, 1, 1, tzinfo=dt_timezone.utc),
         )
 
     def test_main_url_is_accessible(self):
@@ -56,3 +63,22 @@ class MainTest(TestCase):
         self.assertFalse(self.experience.is_ongoing)
         self.assertContains(response, "Selesai")
         self.assertNotContains(response, "Sedang berlangsung")
+
+    def test_interest_url_is_accessible_and_uses_correct_template(self):
+        response = self.client.get(reverse("main:show_interest"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "interest.html")
+
+    def test_interest_data_appears_on_page_when_data_exists(self):
+        response = self.client.get(reverse("main:show_interest"))
+
+        self.assertContains(response, self.interest.title)
+        self.assertContains(response, self.interest.description)
+        self.assertContains(response, "2024")
+
+    def test_empty_interest_page_shows_empty_state_message(self):
+        Interest.objects.all().delete()
+        response = self.client.get(reverse("main:show_interest"))
+
+        self.assertContains(response, "Belum ada interest yang ditambahkan.")
