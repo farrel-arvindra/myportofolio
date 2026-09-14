@@ -1,16 +1,42 @@
-My friends are saying shout up Jenny just yet in the cupba I just want to be like the barring girl than more than gold and diamond* {
+My
+  friends
+  are
+  saying
+  shout
+  up
+  Jenny
+  just
+  yet
+  in
+  the
+  cupba
+  I
+  just
+  want
+  to
+  be
+  like
+  the
+  barring
+  girl
+  than
+  more
+  than
+  gold
+  and
+  diamond* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 :root {
-  --ink: #F3F4F6;           /* Putih terang/abu kebiruan untuk teks */
-  --paper: #121212;         /* Hitam obsidian/abu-abu sangat gelap */
-  --brand: #9B3B48;         /* Burgundy diterangkan sedikit agar tidak tenggelam di background gelap */
-  --brand-hover: #B84756;   
-  --line: #333333;          /* Garis batas abu-abu gelap */
-  --text-muted: #9CA3AF;
+  --ink: #f3f4f6; /* Putih terang/abu kebiruan untuk teks */
+  --paper: #121212; /* Hitam obsidian/abu-abu sangat gelap */
+  --brand: #9b3b48; /* Burgundy diterangkan sedikit agar tidak tenggelam di background gelap */
+  --brand-hover: #b84756;
+  --line: #333333; /* Garis batas abu-abu gelap */
+  --text-muted: #9ca3af;
   --radius: 8px;
 }
 
@@ -33,7 +59,7 @@ h1 {
 }
 
 .brand {
-  font-family: 'Fira Code';
+  font-family: "Fira Code";
   color: var(--brand);
 }
 
@@ -97,7 +123,7 @@ h1 {
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--brand  );
+  color: var(--brand);
   font-weight: 700;
   margin-bottom: 0.75rem;
 }
@@ -193,7 +219,7 @@ h1 {
 
 .interests-container {
   padding: 4rem 0;
-  overflow: hidden; 
+  overflow: hidden;
   color: var(--brand);
 }
 
@@ -206,7 +232,7 @@ h1 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
   text-align: center;
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
 }
 
 .carousel-container {
@@ -214,8 +240,20 @@ h1 {
   overflow: hidden;
   position: relative;
   /* Membuat efek memudar (fade) di ujung kiri dan kanan */
-  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
 }
 
 /* Pembungkus untuk kedua kelompok track */
@@ -230,7 +268,7 @@ h1 {
   display: flex;
   gap: 1.5rem;
   list-style: none;
-  
+
   /* Animasi bergerak terus menerus ke kiri */
   animation: scroll-left 40s linear infinite;
 }
@@ -241,11 +279,11 @@ h1 {
   padding: 2.5rem 1.5rem;
   border-radius: var(--radius);
   background-color: transparent;
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
   font-weight: 500;
   font-size: 1.2rem;
   text-align: center;
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -289,58 +327,69 @@ h1 {
   }
 }
 
-
-
-.experience-section {
-    padding: 4rem 0;
-    border-top: 1px solid var(--line);
+.interest-section {
+  padding: 4rem 0;
+  border-top: 1px solid var(--line);
 }
 
 .section-kicker {
-    color: var(--accent-dark);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  color: var(--brand);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.experience-section h1 {
-    margin: 0.4rem 0 1.5rem;
-    font-size: 2rem;
+.interest-section h1 {
+  margin: 0.4rem 0 2rem;
+  font-size: 2rem;
+  color: var(--ink);
 }
 
-.experience-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1rem;
+.interest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
 }
 
-.experience-card {
-    padding: 1.25rem;
-    background-color: #fff;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
+.interest-card {
+  padding: 1.25rem 1.35rem;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
 }
 
-.experience-category {
-    color: var(--accent-dark);
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
+.interest-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
 }
 
-.experience-card h2 {
-    margin: 0.5rem 0;
-    font-size: 1.25rem;
+.interest-card h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--ink);
 }
 
-.experience-description,
+.interest-year {
+  color: var(--brand);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.interest-description,
 .empty-state {
-    color: var(--text-muted);
+  color: var(--text-muted);
+  margin: 0;
 }
 
-.experience-status {
-    margin-top: 1rem;
-    font-size: 0.85rem;
-    font-weight: 600;
+@media (max-width: 600px) {
+  .interest-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
