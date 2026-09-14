@@ -17,3 +17,16 @@ Berdasarkan batasan tersebut, fungsionalitas dinamis yang paling ingin saya tamb
 AI Disclosure:
 Saya menggunakan gemini pro untuk membantu saya membuat elemen dalam list bergerak. Saya menyertakan contoh agar output Ai yang dihasilkan maksimal. Contoh prompt:
 "Buatlah implementasi marque mirip seperti contoh yang kuberikan pada list item di section kedua"
+
+### Tugas 2
+1. Ketika user melakukan request ke web, request akan diterima oleh urls.py. jika url tersebut cocok dengan endpoint yang ada, url akan memanggil fungsi di dalam views.py. View kemudian berinteraksi dengan model untuk mengambil data dari database. setelah data berhasil diambil, view akan mengirimkan data ke sebuah template. template disini berfungsi sebagai placeholder yang nantinya isinya akan diganti dengan data. hasil gabungan data dengan template akan dikirim sebagai respons untuk dirender dan ditampilkan di browser
+
+2. Jika data disimpan secara manual, setiap kali ada penambahan atau modifikasi pada aplikasi, struktur kode html harus diganti dan hasilnya harus dideploy ulang. Dengan menggunakan model, setiap pembaruan data dapat dilakukan tanpa mengubah file kode dan redeploy. Pendekatan ini memungkinkan aplikasi menangani data yang terus bertambah tanpa mempersulit kode
+
+3. Perintah makemigrations berfungsi untuk mengscan setiap perubahan yang ada di models.py, lalu membuat file skrip migrasi. Perintah migrate akan mengeksekusi skrip migrasi dan membuat table berdasarkan model. Ketika ingin menambah atribut pada suatu model, makemigrations dijalankan untuk membuat skrip migrasi dengan atribut yang ditambahkan. Setelah itu, jika migrate dijalankan, atribut baru tersebut akan ditambahkan menjadi kolom dalam tabel database.
+
+AI Disclosure:
+Proyek ini dikembangkan dengan bantuan AI generatif khusus untuk bagian berikut:
++ Pembuatan markup HTML dan styling CSS.
++ Penulisan dan strukturisasi unit test.
+Logika inti, arsitektur sistem, dan komponen lainnya dikerjakan secara mandiri.
