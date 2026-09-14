@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from main.models import Experience
+from main.models import Interest 
 
 
 def show_main(request):
@@ -23,3 +24,11 @@ def show_experience(request):
         "experience_list": Experience.objects.all(),
     }
     return render(request, "experience.html", context)
+
+def show_interest(request):
+    context = {
+        "name": "Maulana Farrel Arvindra",
+        "interest_list": Interest.objects.all(),
+    }
+
+    return render(request, "interest.html", context)
