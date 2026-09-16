@@ -39,8 +39,11 @@
               <div class="interest-header">
                 <h2>{{ interest.title }}</h2>
                 <span class="interest-year">
-                  {% if interest.since %} {{ interest.since|date:"Y" }} {% else
-                  %} — {% endif %}
+                  {% if interest.since %}
+                  {{ interest.since }}
+                  {% else %}
+                  —
+                  {% endif %}
                 </span>
               </div>
               <p class="interest-description">{{ interest.description }}</p>

@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('title', models.CharField(max_length=255)),
                 ('description', models.TextField()),
-                ('since', models.DateTimeField(blank=True, null=True)),
+                ('since', models.PositiveIntegerField(blank=True, null=True)),
             ],
         ),
     ]

@@ -1,5 +1,3 @@
-from datetime import datetime, timezone as dt_timezone
-
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -17,7 +15,7 @@ class MainTest(TestCase):
         self.interest = Interest.objects.create(
             title="Machine Learning",
             description="Mempelajari model predictive analytics dan pengembangan AI.",
-            since=datetime(2024, 1, 1, tzinfo=dt_timezone.utc),
+            since=2024,
         )
 
     def test_main_url_is_accessible(self):
