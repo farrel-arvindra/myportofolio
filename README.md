@@ -30,3 +30,18 @@ Proyek ini dikembangkan dengan bantuan AI generatif khusus untuk bagian berikut:
 + Pembuatan markup HTML dan styling CSS.
 + Penulisan dan strukturisasi unit test.
 Logika inti, arsitektur sistem, dan komponen lainnya dikerjakan secara mandiri.
+
+
+### Tugas 3
+1. Model form Django akan secara otomatis menerjemahkan struktur model menjadi field form HTML yang sesuai. Input juga otomatis divalidasi berdasarkan definisi model. Penggunaan {% csrf_token %} digunakan sebagai mekanisme keamanan bawaan Django untuk mencegah serangan Cross-Site Request Forgery.
+2. JSON adalah format turunan asli dari Javascript sehingga sangat kompatibel dengan browser yang dapat memahami javascript.
+3. Alur view saat mengembalikan data portofolio JSON:
+    1. URL dispatcher Django menerima HTTP Request dari klien dan mengarahkannya ke fungsi/class view yang sesuai.
+    2. View berinteraksi dengan model Django menggunakan ORM untuk mengambil data portofolio dari database (menghasilkan objek QuerySet)
+    3. QuerySet yang berisi objek model portofolio diubah strukturnya menjadi format tipe data bawaan Python (seperti list atau dictionary).
+    4. Data Python tersebut dikonversi (di-dump) menjadi teks berformat JSON.
+    5. View membungkus data JSON tersebut ke dalam objek JsonResponse (atau HttpResponse dengan header application/json) dan mengirimkannya kembali ke klien.
+    Serialisasi bertugas menerjemahkan objek kompleks menjadi representasi standar seperti JSON.
+
+AI disclosure:
+Pada tugas kali ini, saya tidak menggunakan AI sedikitpun. Saya mengikuti apa yang dilakukan di tutorial
