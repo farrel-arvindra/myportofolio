@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
-     {% block content %}
+    {% block content %}
     <main>
       <section class="hero" id="profile">
         <div class="container hero-grid">
@@ -40,14 +40,20 @@
           <div class="hero-details">
             <p class="bio">{{ bio }}</p>
             <dl class="meta-list">
-              <div class="meta-row">
-                <dt>NPM</dt>
-                <dd>{{ npm }}</dd>
-              </div>
-              <div class="meta-row">
-                <dt>Program</dt>
-                <dd>{{ study_program }}</dd>
-              </div>
+              <dl class="meta-list">
+                <div class="meta-row">
+                  <dt>NPM</dt>
+                  <dd>{{ npm }}</dd>
+                </div>
+                <div class="meta-row">
+                  <dt>Program</dt>
+                  <dd>{{ study_program }}</dd>
+                </div>
+                <div class="meta-row">
+                  <dt>Sesi Terakhir Login</dt>
+                  <dd>{{ last_login }}</dd>
+                </div>
+              </dl>
             </dl>
             <div class="social-links">
               <a href="https://github.com/farrel-arvindra" class="social-link"
