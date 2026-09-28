@@ -45,3 +45,7 @@ Logika inti, arsitektur sistem, dan komponen lainnya dikerjakan secara mandiri.
 
 AI disclosure:
 Pada tugas kali ini, saya tidak menggunakan AI sedikitpun. Saya mengikuti apa yang dilakukan di tutorial
+
+### Week 4
+AI Disclosure:
+“Project ini dikembangkan dengan bantuan AI sebagai asisten dalam penyusunan ide, struktur, dan perbaikan kode berdasarkan prompt yang saya berikan. Semua keputusan akhir, revisi, dan validasi tetap dilakukan oleh saya agar hasilnya sesuai dengan kebutuhan dan kualitas yang diinginkan.”
