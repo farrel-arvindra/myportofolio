@@ -126,7 +126,12 @@ def show_interest(request):
 
     return render(request, "interest.html", context)
 
+
+@login_required(login_url="/login/")
 def create_interest(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     form = InterestForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -142,7 +147,11 @@ def create_interest(request):
     return render(request, "interests_form.html", context)
 
 
+@login_required(login_url="/login/")
 def update_interest(request, interest_id):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     interest = get_object_or_404(Interest, pk=interest_id)
     form = InterestForm(request.POST or None, instance=interest)
 
@@ -155,7 +164,11 @@ def update_interest(request, interest_id):
     return render(request, "interests_form.html", context)
 
 
+@login_required(login_url="/login/")
 def delete_interest(request, interest_id):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     interest = get_object_or_404(Interest, pk=interest_id)
 
     if request.method == "POST":

@@ -1,11 +1,22 @@
-{% extends "base.html" %} {% block meta %}
+{% extends "base.html" %}
+{% block meta %}
 <title>Interest - {{ name }}</title>
-{% endblock meta %} {% block content %}
+{% endblock meta %}
+
+{% block content %}
 <main>
   <section class="interest-section" id="interest">
     <div class="container">
-      <p class="section-kicker">Hal yang saya sukai</p>
-      <h1>Interest</h1>
+      <div class="interest-header-row">
+        <div>
+          <p class="section-kicker">Hal yang saya sukai</p>
+          <h1>Interest</h1>
+        </div>
+
+        {% if user.is_authenticated and user.is_superuser %}
+        <a href="{% url 'main:create_interest' %}" class="button">Tambah Interest</a>
+        {% endif %}
+      </div>
 
       <div class="interest-grid">
         {% for interest in interest_list %}
@@ -13,11 +24,24 @@
           <div class="interest-header">
             <h2>{{ interest.title }}</h2>
             <span class="interest-year">
-              {% if interest.since %} {{ interest.since }} {% else %} — {% endif
-              %}
+              {% if interest.since %}
+                {{ interest.since }}
+              {% else %}
+                —
+              {% endif %}
             </span>
           </div>
           <p class="interest-description">{{ interest.description }}</p>
+
+          {% if user.is_authenticated and user.is_superuser %}
+          <div class="interest-actions">
+            <a href="{% url 'main:update_interest' interest.id %}" class="button button-secondary">Edit</a>
+            <form method="post" action="{% url 'main:delete_interest' interest.id %}" class="inline-form">
+              {% csrf_token %}
+              <button type="submit" class="button button-danger">Hapus</button>
+            </form>
+          </div>
+          {% endif %}
         </article>
         {% empty %}
         <p class="empty-state">Belum ada interest yang ditambahkan.</p>
