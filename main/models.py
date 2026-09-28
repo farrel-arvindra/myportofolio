@@ -35,6 +35,11 @@ class Interest(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     since = models.PositiveIntegerField(blank=True, null=True)
+    interested_users = models.ManyToManyField(
+        User,
+        related_name="interested_in",
+        blank=True,
+    )
 
     def __str__(self):
         return self.title

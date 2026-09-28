@@ -221,11 +221,22 @@ def toggle_star(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
     if request.method == "POST":
-        # Kalau akun ini sudah pernah memberi star, batalkan star-nya.
-        # Kalau belum, tambahkan star.
         if request.user in project.starred_by.all():
             project.starred_by.remove(request.user)
         else:
             project.starred_by.add(request.user)
 
     return redirect("main:show_projects")
+
+
+@login_required(login_url="/login/")
+def toggle_interest_star(request, interest_id):
+    interest = get_object_or_404(Interest, pk=interest_id)
+
+    if request.method == "POST":
+        if request.user in interest.interested_users.all():
+            interest.interested_users.remove(request.user)
+        else:
+            interest.interested_users.add(request.user)
+
+    return redirect("main:show_interest")

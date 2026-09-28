@@ -33,6 +33,19 @@
           </div>
           <p class="interest-description">{{ interest.description }}</p>
 
+          {% if user.is_authenticated %}
+          <form method="post" action="{% url 'main:toggle_interest_star' interest.id %}" class="star-form">
+            {% csrf_token %}
+            <button type="submit"
+                    class="button button-star{% if user in interest.interested_users.all %} is-starred{% endif %}"
+                    title="{% if interest.interested_users.all %}Disukai oleh {{ interest.interested_users.all|join:', ' }}{% else %}Jadilah yang pertama memberi star{% endif %}">
+              <span aria-hidden="true">★</span>
+              {% if user in interest.interested_users.all %}Unstar{% else %}Star{% endif %}
+              <span class="star-count">{{ interest.interested_users.count }}</span>
+            </button>
+          </form>
+          {% endif %}
+
           {% if user.is_authenticated and user.is_superuser %}
           <div class="interest-actions">
             <a href="{% url 'main:update_interest' interest.id %}" class="button button-secondary">Edit</a>
