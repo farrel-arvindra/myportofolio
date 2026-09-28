@@ -17,6 +17,16 @@ from django.contrib.auth.decorators import login_required  # Tambahkan baris ini
 from django.core.exceptions import PermissionDenied        # Tambahkan baris ini
 
 
+def user_is_editor(user):
+    return user.is_authenticated and (
+        user.is_superuser or user.groups.filter(name="Editor").exists()
+    )
+
+
+def can_update_model(user, model_name):
+    return user.is_superuser or user.has_perm(f"main.change_{model_name}")
+
+
 def show_main(request):
     last_login = request.COOKIES.get('last_login', 'Belum ada sesi login / Cookie tidak ditemukan')
     context = {
@@ -89,7 +99,7 @@ def create_project(request):
 
 @login_required(login_url="/login/")
 def update_project(request, project_id):
-    if not request.user.is_superuser:
+    if not can_update_model(request.user, "project"):
         raise PermissionDenied
 
     project = get_object_or_404(Project, pk=project_id)
@@ -149,7 +159,7 @@ def create_interest(request):
 
 @login_required(login_url="/login/")
 def update_interest(request, interest_id):
-    if not request.user.is_superuser:
+    if not can_update_model(request.user, "interest"):
         raise PermissionDenied
 
     interest = get_object_or_404(Interest, pk=interest_id)
