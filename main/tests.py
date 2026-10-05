@@ -1,5 +1,7 @@
+import re
+
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -189,3 +191,33 @@ class MainTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("title", response.json()["errors"])
         self.assertIn("description", response.json()["errors"])
+
+    def test_interest_ajax_creation_requires_and_accepts_csrf_token(self):
+        admin = User.objects.create_superuser(
+            username="admin",
+            email="admin@example.com",
+            password="password",
+        )
+        csrf_client = Client(enforce_csrf_checks=True)
+        csrf_client.force_login(admin)
+
+        page_response = csrf_client.get(reverse("main:show_interest"))
+        token_match = re.search(
+            rb'name="csrfmiddlewaretoken" value="([^"]+)"',
+            page_response.content,
+        )
+        self.assertIsNotNone(token_match)
+        csrf_token = token_match.group(1).decode()
+
+        url = reverse("main:create_interest_ajax")
+        data = {
+            "title": "Reading",
+            "description": "Books",
+            "since": 2020,
+        }
+        rejected_response = csrf_client.post(url, data)
+        self.assertEqual(rejected_response.status_code, 403)
+
+        data["csrfmiddlewaretoken"] = csrf_token
+        accepted_response = csrf_client.post(url, data)
+        self.assertEqual(accepted_response.status_code, 201)
