@@ -144,8 +144,14 @@ def delete_project(request, project_id):
 def show_interest(request):
     context = {
         "name": "Farrel",
-        "interest_list": Interest.objects.all(),
+        "can_star": request.user.is_authenticated,
+        "can_edit_interest": request.user.is_authenticated
+        and can_update_model(request.user, "interest"),
+        "can_delete_interest": request.user.is_superuser,
+        "can_add_interest": request.user.is_superuser,
     }
+    if request.user.is_superuser:
+        context["form"] = InterestForm()
 
     return render(request, "interest.html", context)
 

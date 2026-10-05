@@ -310,6 +310,18 @@ h1 {
   gap: 1rem;
 }
 
+.interest-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.interest-page-header h1 {
+  margin-bottom: 0;
+}
+
 .interest-card {
   padding: 1.25rem 1.35rem;
   background-color: rgba(255, 255, 255, 0.02);
@@ -864,5 +876,4 @@ h1 {
 .toast-success { border-left: 4px solid #22c55e; }
 .toast-error { border-left: 4px solid #b42318; }
 .toast-normal { border-left: 4px solid var(--accent); }
-
 

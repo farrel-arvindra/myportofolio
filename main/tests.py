@@ -72,15 +72,36 @@ class MainTest(TestCase):
     def test_interest_data_appears_on_page_when_data_exists(self):
         response = self.client.get(reverse("main:show_interest"))
 
-        self.assertContains(response, self.interest.title)
-        self.assertContains(response, self.interest.description)
-        self.assertContains(response, "2024")
+        self.assertContains(response, "Memuat data interest")
+        self.assertNotContains(response, self.interest.title)
+        self.assertNotContains(response, self.interest.description)
 
-    def test_empty_interest_page_shows_empty_state_message(self):
+    def test_empty_interest_page_starts_with_loading_state(self):
         Interest.objects.all().delete()
         response = self.client.get(reverse("main:show_interest"))
 
-        self.assertContains(response, "Belum ada interest yang ditambahkan.")
+        self.assertContains(response, "Belum ada interest yang ditambahkan atau ditemukan.")
+        self.assertContains(response, "hide")
+        data_response = self.client.get(reverse("main:get_interests_json"))
+        self.assertEqual(data_response.json(), [])
+
+    def test_interest_add_modal_is_only_rendered_for_superuser(self):
+        guest_response = self.client.get(reverse("main:show_interest"))
+        self.assertNotContains(guest_response, 'id="add-interest-modal"')
+
+        User.objects.create_user(username="visitor", password="password")
+        self.client.login(username="visitor", password="password")
+        user_response = self.client.get(reverse("main:show_interest"))
+        self.assertNotContains(user_response, 'id="add-interest-modal"')
+
+        admin = User.objects.create_superuser(
+            username="admin",
+            email="admin@example.com",
+            password="password",
+        )
+        self.client.force_login(admin)
+        admin_response = self.client.get(reverse("main:show_interest"))
+        self.assertContains(admin_response, 'id="add-interest-modal"')
 
     def test_interests_json_is_available_to_anonymous_users_with_star_data(self):
         user = User.objects.create_user(username="visitor", password="password")

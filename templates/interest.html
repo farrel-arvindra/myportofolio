@@ -1,79 +1,120 @@
-{% extends "base.html" %} {% block meta %}
+{% extends "base.html" %}
+{% load static %}
+{% block meta %}
 <title>Interest - {{ name }}</title>
-{% endblock meta %} {% block content %}
+{% endblock meta %}
+{% block content %}
 <main>
-  <section class="interest-section" id="interest">
+  <section
+    id="interest-app"
+    class="interest-section"
+    data-list-url="{% url 'main:get_interests_json' %}"
+    data-star-url-template="{% url 'main:toggle_interest_star' '00000000-0000-0000-0000-000000000000' %}"
+    data-edit-url-template="{% url 'main:update_interest' '00000000-0000-0000-0000-000000000000' %}"
+    data-delete-url-template="{% url 'main:delete_interest' '00000000-0000-0000-0000-000000000000' %}"
+    data-can-star="{{ can_star|yesno:'true,false' }}"
+    data-can-edit="{{ can_edit_interest|yesno:'true,false' }}"
+    data-can-delete="{{ can_delete_interest|yesno:'true,false' }}"
+  >
     <div class="container">
-      <div class="interest-header-row">
+      <div class="interest-page-header">
         <div>
           <p class="section-kicker">Hal yang saya sukai</p>
           <h1>Interest</h1>
         </div>
 
-        {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'main:create_interest' %}" class="button"
-          >Tambah Interest</a
+        {% if can_add_interest %}
+        <button
+          type="button"
+          class="button project-add-button"
+          popovertarget="add-interest-modal"
         >
+          <span aria-hidden="true">+</span>
+          Tambah Interest
+        </button>
         {% endif %}
       </div>
 
-      <div class="interest-grid">
-        {% for interest in interest_list %}
-        <article class="interest-card">
-          <div class="interest-header">
-            <h2>{{ interest.title }}</h2>
-            <span class="interest-year">
-              {% if interest.since %} {{ interest.since }} {% else %} — {% endif
-              %}
-            </span>
-          </div>
-          <p class="interest-description">{{ interest.description }}</p>
+      <form id="interest-csrf-form" class="hide">{% csrf_token %}</form>
+      <form id="interest-search-form" class="project-search" role="search">
+        <input
+          type="search"
+          id="interest-search-input"
+          name="title"
+          placeholder="Cari berdasarkan nama interest"
+          class="project-search__input"
+          aria-label="Cari berdasarkan nama interest"
+        />
+        <button type="submit" class="button">Cari</button>
+      </form>
 
-          <div class="card-actions">
-            {% if user.is_authenticated %}
-            <form
-              method="post"
-              action="{% url 'main:toggle_interest_star' interest.id %}"
-              class="star-form"
-            >
-              {% csrf_token %}
-              <button
-                type="submit"
-                class="button button-star{% if user in interest.interested_users.all %} is-starred{% endif %}"
-                title="{% if interest.interested_users.all %}Disukai oleh {{ interest.interested_users.all|join:', ' }}{% else %}Jadilah yang pertama memberi star{% endif %}"
-              >
-                <span aria-hidden="true">★</span>
-                {% if user in interest.interested_users.all %} Unstar {% else %}
-                Star {% endif %}
-                <span class="star-count"
-                  >{{ interest.interested_users.count }}</span
-                >
-              </button>
-            </form>
-            {% endif %} {% if user.is_authenticated and user.has_perm
-            'main.change_interest' %}
-            <a
-              href="{% url 'main:update_interest' interest.id %}"
-              class="button button-secondary"
-              >Edit</a
-            >
-            {% endif %} {% if user.is_authenticated and user.is_superuser %}
-            <form
-              method="post"
-              action="{% url 'main:delete_interest' interest.id %}"
-              class="inline-form"
-            >
-              {% csrf_token %}
-              <button type="submit" class="button button-danger">Hapus</button>
-            </form>
-            {% endif %}
-          </div>
-        </article>
-        {% empty %}
-        <p class="empty-state">Belum ada interest yang ditambahkan.</p>
-        {% endfor %}
+      <p id="interest-loading" class="empty-state" role="status">
+        Memuat data interest...
+      </p>
+      <div id="interest-error" class="empty-state hide" role="alert">
+        <p>Gagal memuat data interest. Silakan coba lagi.</p>
+        <button id="interest-retry" type="button" class="button button-secondary">
+          Coba lagi
+        </button>
       </div>
+      <p id="interest-empty" class="empty-state hide">
+        Belum ada interest yang ditambahkan atau ditemukan.
+      </p>
+      <div id="interest-grid" class="interest-grid hide"></div>
     </div>
   </section>
 </main>
+
+{% if can_add_interest %}
+<div
+  id="add-interest-modal"
+  class="project-form-modal"
+  popover="auto"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="add-interest-modal-title"
+>
+  <button
+    type="button"
+    class="project-form-modal__backdrop"
+    popovertarget="add-interest-modal"
+    popovertargetaction="hide"
+    aria-label="Tutup form tambah interest"
+  ></button>
+  <div class="project-form-modal__content">
+    <button
+      type="button"
+      class="project-form-modal__close"
+      popovertarget="add-interest-modal"
+      popovertargetaction="hide"
+      aria-label="Tutup form tambah interest"
+    >×</button>
+    <h2 id="add-interest-modal-title">Tambah Interest Baru</h2>
+    <form
+      id="interest-form"
+      method="post"
+      action="{% url 'main:create_interest_ajax' %}"
+      class="project-form"
+    >
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+      </div>
+      {% endfor %}
+      <div class="project-form-modal__actions">
+        <button
+          type="button"
+          class="button button-secondary"
+          popovertarget="add-interest-modal"
+          popovertargetaction="hide"
+        >Batal</button>
+        <button type="submit" class="button">Tambah Interest</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+<script src="{% static 'js/interests.js' %}" defer></script>
 {% endblock content %}
