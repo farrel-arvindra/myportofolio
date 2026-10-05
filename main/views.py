@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required  # Tambahkan baris ini
 from django.core.exceptions import PermissionDenied        # Tambahkan baris ini
 
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 
 def user_is_editor(user):
@@ -148,6 +148,65 @@ def show_interest(request):
     }
 
     return render(request, "interest.html", context)
+
+
+@require_GET
+def get_interests_json(request):
+    title_query = request.GET.get("title", "").strip()
+    interests = Interest.objects.prefetch_related("interested_users").all()
+
+    if title_query:
+        interests = interests.filter(title__icontains=title_query)
+
+    data = []
+    for interest in interests:
+        interested_users = interest.interested_users.all()
+        is_interested = (
+            request.user in interested_users if request.user.is_authenticated else False
+        )
+        data.append(
+            {
+                "pk": str(interest.id),
+                "fields": {
+                    "title": interest.title,
+                    "description": interest.description,
+                    "since": interest.since,
+                    "star_count": interested_users.count(),
+                    "is_starred": is_interested,
+                },
+            }
+        )
+
+    return JsonResponse(data, safe=False)
+
+
+@require_POST
+def create_interest_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan interest."},
+            status=403,
+        )
+
+    form = InterestForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+
+    interest = form.save()
+    return JsonResponse(
+        {
+            "message": "Interest berhasil ditambahkan.",
+            "pk": str(interest.id),
+            "fields": {
+                "title": interest.title,
+                "description": interest.description,
+                "since": interest.since,
+                "star_count": 0,
+                "is_starred": False,
+            },
+        },
+        status=201,
+    )
 
 
 @login_required(login_url="/login/")

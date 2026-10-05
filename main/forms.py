@@ -42,6 +42,18 @@ class InterestForm(ModelForm):
             ),
         }
 
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data["title"]).strip()
+        if not title:
+            raise ValidationError("Nama interest tidak boleh hanya berisi tag HTML.")
+        return title
+
+    def clean_description(self):
+        description = strip_tags(self.cleaned_data["description"]).strip()
+        if not description:
+            raise ValidationError("Deskripsi interest tidak boleh hanya berisi tag HTML.")
+        return description
+
 from main.models import Project
 
 class ProjectForm(ModelForm):

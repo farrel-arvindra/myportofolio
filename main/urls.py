@@ -20,7 +20,9 @@ urlpatterns = [
     ),
 
     path("interest/", show_interest, name='show_interest'),
+    path("api/interests/", views.get_interests_json, name="get_interests_json"),
     path("interest/add/", create_interest, name="create_interest"),
+    path("interest/add-ajax/", views.create_interest_ajax, name="create_interest_ajax"),
     path("interest/<uuid:interest_id>/edit/", views.update_interest, name="update_interest"),
     path("interest/<uuid:interest_id>/delete/", views.delete_interest, name="delete_interest"),
     path("interest/<uuid:interest_id>/star/", views.toggle_interest_star, name="toggle_interest_star"),

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -80,3 +81,90 @@ class MainTest(TestCase):
         response = self.client.get(reverse("main:show_interest"))
 
         self.assertContains(response, "Belum ada interest yang ditambahkan.")
+
+    def test_interests_json_is_available_to_anonymous_users_with_star_data(self):
+        user = User.objects.create_user(username="visitor", password="password")
+        self.interest.interested_users.add(user)
+
+        response = self.client.get(reverse("main:get_interests_json"))
+
+        self.assertEqual(response.status_code, 200)
+        interest_data = response.json()[0]
+        self.assertEqual(interest_data["fields"]["star_count"], 1)
+        self.assertFalse(interest_data["fields"]["is_starred"])
+
+    def test_interests_json_reports_current_users_star(self):
+        user = User.objects.create_user(username="visitor", password="password")
+        self.interest.interested_users.add(user)
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("main:get_interests_json"))
+
+        self.assertTrue(response.json()[0]["fields"]["is_starred"])
+
+    def test_interests_json_filters_by_title(self):
+        Interest.objects.create(title="Baking", description="Making bread")
+
+        response = self.client.get(
+            reverse("main:get_interests_json"),
+            {"title": "machine"},
+        )
+
+        self.assertEqual(len(response.json()), 1)
+        self.assertEqual(response.json()[0]["fields"]["title"], "Machine Learning")
+
+    def test_interest_ajax_creation_requires_superuser(self):
+        url = reverse("main:create_interest_ajax")
+
+        anonymous_response = self.client.post(
+            url,
+            {"title": "Reading", "description": "Books", "since": 2020},
+        )
+        self.assertEqual(anonymous_response.status_code, 403)
+
+        User.objects.create_user(username="visitor", password="password")
+        self.client.login(username="visitor", password="password")
+        user_response = self.client.post(
+            url,
+            {"title": "Reading", "description": "Books", "since": 2020},
+        )
+        self.assertEqual(user_response.status_code, 403)
+        self.assertFalse(Interest.objects.filter(title="Reading").exists())
+
+    def test_interest_ajax_creation_returns_created_interest(self):
+        admin = User.objects.create_superuser(
+            username="admin",
+            email="admin@example.com",
+            password="password",
+        )
+        self.client.force_login(admin)
+
+        response = self.client.post(
+            reverse("main:create_interest_ajax"),
+            {
+                "title": "  <b>Reading</b>  ",
+                "description": "<p>Books and stories</p>",
+                "since": 2020,
+            },
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["fields"]["title"], "Reading")
+        self.assertEqual(response.json()["fields"]["description"], "Books and stories")
+
+    def test_interest_ajax_creation_returns_validation_errors(self):
+        admin = User.objects.create_superuser(
+            username="admin",
+            email="admin@example.com",
+            password="password",
+        )
+        self.client.force_login(admin)
+
+        response = self.client.post(
+            reverse("main:create_interest_ajax"),
+            {"title": "<b></b>", "description": "<p></p>", "since": 2020},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("title", response.json()["errors"])
+        self.assertIn("description", response.json()["errors"])
