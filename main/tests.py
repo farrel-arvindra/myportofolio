@@ -5,7 +5,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from main.models import Experience, Interest
+from main.models import Experience, Interest, Project
 
 
 class MainTest(TestCase):
@@ -70,6 +70,24 @@ class MainTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "interest.html")
+
+    def test_projects_page_renders_ajax_shell_and_json_data(self):
+        project = Project.objects.create(
+            title="Portfolio",
+            description="A personal portfolio project",
+            tech_stack="Django",
+        )
+
+        page_response = self.client.get(reverse("main:show_projects"))
+        self.assertEqual(page_response.status_code, 200)
+        self.assertTemplateUsed(page_response, "project.html")
+        self.assertContains(page_response, 'id="project-search-form"')
+        self.assertContains(page_response, 'id="grid"')
+        self.assertNotContains(page_response, project.title)
+
+        data_response = self.client.get(reverse("main:get_projects_json"))
+        self.assertEqual(data_response.status_code, 200)
+        self.assertEqual(data_response.json()[0]["fields"]["title"], project.title)
 
     def test_interest_data_appears_on_page_when_data_exists(self):
         response = self.client.get(reverse("main:show_interest"))
