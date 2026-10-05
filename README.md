@@ -49,3 +49,38 @@ Pada tugas kali ini, saya tidak menggunakan AI sedikitpun. Saya mengikuti apa ya
 ### Week 4
 AI Disclosure:
 “Project ini dikembangkan dengan bantuan AI sebagai asisten dalam penyusunan ide, struktur, dan perbaikan kode berdasarkan prompt yang saya berikan. Semua keputusan akhir, revisi, dan validasi tetap dilakukan oleh saya agar hasilnya sesuai dengan kebutuhan dan kualitas yang diinginkan.”
+
+### Week 5
+
+1. **Debouncing** adalah teknik menunda eksekusi suatu fungsi sampai tidak ada
+   input baru selama jangka waktu tertentu. Pada pencarian AJAX, timer diatur
+   ulang setiap kali pengguna mengetik. Permintaan pencarian baru dikirim setelah
+   pengguna berhenti mengetik, sehingga tidak perlu mengirim request untuk
+   setiap karakter. Ini mengurangi request yang tidak diperlukan dan beban
+   server, serta membantu hasil pencarian tetap relevan dengan input terbaru.
+
+2. `fetch()` mengembalikan sebuah `Promise`, karena respons jaringan tidak
+   langsung tersedia. `await` menunggu Promise tersebut selesai sebelum
+   menjalankan baris berikutnya, sehingga respons dapat diperiksa dan isi JSON
+   dapat dibaca pada urutan yang benar. Tanpa `await`, kode langsung berjalan
+   dengan nilai Promise, bukan respons yang sudah diterima. Kita tetap dapat
+   menangani Promise tanpa `await` dengan `.then()`, tetapi jika Promise tidak
+   ditangani, data belum dapat digunakan dan error asinkron dapat terlewat.
+
+3. **Cross-Site Scripting (XSS)** adalah serangan ketika konten yang dikendalikan
+   penyerang ditafsirkan browser sebagai kode aktif, misalnya JavaScript, lalu
+   dijalankan pada halaman pengguna lain. Data dari AJAX diterima sebagai nilai
+   JavaScript dan tidak otomatis melalui proses auto-escaping template Django.
+   Jika nilai itu langsung dimasukkan ke halaman dengan `innerHTML`, markup atau
+   skrip berbahaya dapat ditafsirkan oleh browser. Karena itu, teks sebaiknya
+   ditampilkan melalui `textContent` atau di-escape sebelum dirender sebagai
+   HTML. Template Django melakukan auto-escaping secara default, kecuali
+   escaping tersebut sengaja dinonaktifkan.
+
+**AI Disclosure:** Saya menggunakan AI sebagai asisten untuk mengimplementasikan endpoint dan antarmuka AJAX Interests, serta
+menyusun tes. Saya menentukan bagian portofolio yang dikerjakan, memberikan
+konteks hak akses Tugas 4, memilih pengerjaan bertahap agar tiap tahap dapat
+ditinjau dan di-commit, serta meminta perubahan dan pemeriksaan lanjutan.
+Verifikasi otomatis dilakukan dengan menjalankan tes Django dan pemeriksaan
+halaman/API di lingkungan pengembangan. Saya bertanggung jawab untuk meninjau
+hasil akhir dan memastikan penjelasan tugas ini sesuai dengan pemahaman saya.
