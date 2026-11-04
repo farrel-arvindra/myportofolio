@@ -127,3 +127,4 @@ def interest_star(request, interest_id):
         interest.interested_users.add(request.user)
     serializer = InterestSerializer(interest, context={"request": request})
     return Response(serializer.data)
+

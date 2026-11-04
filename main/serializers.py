@@ -86,3 +86,4 @@ class InterestSerializer(serializers.ModelSerializer):
         if request is None or not request.user.is_authenticated:
             return False
         return request.user in obj.interested_users.all()
+

@@ -12,3 +12,4 @@ urlpatterns = [
     path("interests/<uuid:interest_id>/", api_views.interest_detail, name="interest-detail"),
     path("interests/<uuid:interest_id>/star/", api_views.interest_star, name="interest-star"),
 ]
+

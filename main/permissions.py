@@ -32,3 +32,4 @@ class IsPortfolioOwnerOrEditorOrReadOnly(BasePermission):
             request.method in ("PUT", "PATCH")
             and request.user.has_perm("main.change_interest")
         )
+
