@@ -8,9 +8,17 @@
   const emptyState = document.getElementById("interest-empty");
   const searchForm = document.getElementById("interest-search-form");
   const searchInput = document.getElementById("interest-search-input");
-  const csrfToken =
-    document.querySelector("#interest-csrf-form [name=csrfmiddlewaretoken]")
-      ?.value || "";
+  function getCsrfToken() {
+    const cookie = document.cookie
+      .split(";")
+      .map((value) => value.trim())
+      .find((value) => value.startsWith("csrftoken="));
+    if (cookie) return decodeURIComponent(cookie.slice("csrftoken=".length));
+    return (
+      document.querySelector("#interest-csrf-form [name=csrfmiddlewaretoken]")
+        ?.value || ""
+    );
+  }
   const debounceDelay = 300;
   let debounceTimer;
   let activeRequest;
@@ -24,18 +32,33 @@
 
   function makeButton(text, className) {
     const button = document.createElement("button");
-    button.type = "submit";
+    button.type = "button";
     button.className = className;
     button.textContent = text;
     return button;
   }
 
-  function setCsrfToken(form) {
-    const tokenInput = document.createElement("input");
-    tokenInput.type = "hidden";
-    tokenInput.name = "csrfmiddlewaretoken";
-    tokenInput.value = csrfToken;
-    form.append(tokenInput);
+  function apiErrorMessage(data, status) {
+    const messages = Object.values(data)
+      .flat()
+      .filter((value) => typeof value === "string");
+    return messages.join(" ") || `Request failed (HTTP ${status}).`;
+  }
+
+  async function writeInterest(url, method, payload) {
+    const response = await fetch(url, {
+      method,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCsrfToken(),
+      },
+      body: payload === undefined ? undefined : JSON.stringify(payload),
+    });
+    if (response.status === 204) return null;
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(apiErrorMessage(data, response.status));
+    return data;
   }
 
   function makeItemUrl(template, id) {
@@ -46,7 +69,7 @@
   }
 
   function createInterestCard(item) {
-    const fields = item.fields;
+    const fields = item;
     const card = document.createElement("article");
     card.className = "interest-card";
 
@@ -67,19 +90,20 @@
     actions.className = "card-actions";
 
     if (app.dataset.canStar === "true") {
-      const starForm = document.createElement("form");
-      starForm.method = "post";
-      starForm.action = makeItemUrl(app.dataset.starUrlTemplate, item.pk);
-      starForm.className = "star-form";
-      setCsrfToken(starForm);
-
       const starButton = makeButton(
         `${fields.is_starred ? "★ Unstar" : "★ Star"} ${fields.star_count}`,
         `button button-star${fields.is_starred ? " is-starred" : ""}`,
       );
       starButton.title = `${fields.star_count} star`;
-      starForm.append(starButton);
-      actions.append(starForm);
+      starButton.addEventListener("click", () =>
+        runAction(
+          starButton,
+          makeItemUrl(app.dataset.starUrlTemplate, item.id),
+          "POST",
+          "Star diperbarui.",
+        ),
+      );
+      actions.append(starButton);
     } else {
       const count = document.createElement("span");
       count.className = "star-count";
@@ -90,29 +114,40 @@
     if (app.dataset.canEdit === "true") {
       const editLink = document.createElement("a");
       editLink.className = "button button-secondary";
-      editLink.href = makeItemUrl(app.dataset.editUrlTemplate, item.pk);
+      editLink.href = makeItemUrl(app.dataset.editUrlTemplate, item.id);
       editLink.textContent = "Edit";
       actions.append(editLink);
     }
 
     if (app.dataset.canDelete === "true") {
-      const deleteForm = document.createElement("form");
-      deleteForm.method = "post";
-      deleteForm.action = makeItemUrl(app.dataset.deleteUrlTemplate, item.pk);
-      deleteForm.className = "inline-form";
-      setCsrfToken(deleteForm);
       const deleteButton = makeButton("Hapus", "button button-danger");
-      deleteButton.addEventListener("click", (event) => {
-        if (!window.confirm("Yakin ingin menghapus interest ini?")) {
-          event.preventDefault();
-        }
+      deleteButton.addEventListener("click", () => {
+        if (!window.confirm("Yakin ingin menghapus interest ini?")) return;
+        runAction(
+          deleteButton,
+          makeItemUrl(app.dataset.deleteUrlTemplate, item.id),
+          "DELETE",
+          "Interest dihapus.",
+        );
       });
-      deleteForm.append(deleteButton);
-      actions.append(deleteForm);
+      actions.append(deleteButton);
     }
 
     card.append(header, description, actions);
     return card;
+  }
+
+  async function runAction(button, url, method, successMessage) {
+    if (button.disabled) return;
+    button.disabled = true;
+    try {
+      await writeInterest(url, method);
+      showToast("Berhasil", successMessage, "success");
+      await loadInterests(searchInput.value.trim());
+    } catch (error) {
+      showToast("Permintaan gagal", error.message, "error");
+      button.disabled = false;
+    }
   }
 
   async function loadInterests(query = "") {
@@ -174,33 +209,21 @@
       submitButton.disabled = true;
 
       try {
-        const response = await fetch(interestForm.action, {
-          method: "POST",
-          headers: { Accept: "application/json" },
-          body: new FormData(interestForm),
+        const fields = new FormData(interestForm);
+        const since = String(fields.get("since") ?? "").trim();
+        await writeInterest(app.dataset.listUrl, "POST", {
+          title: fields.get("title"),
+          description: fields.get("description"),
+          since: since === "" ? null : Number(since),
         });
-        const result = await response.json();
-        if (!response.ok) {
-          const messages = result.errors
-            ? Object.values(result.errors)
-                .flat()
-                .map((error) => error.message)
-            : [result.message || `Terjadi kesalahan (status ${response.status}).`];
-          showToast("Gagal menambahkan interest", messages.join(" "), "error");
-          return;
-        }
 
         interestForm.reset();
         document.getElementById("add-interest-modal").hidePopover();
-        showToast("Berhasil", result.message, "success");
+        showToast("Berhasil", "Interest berhasil ditambahkan.", "success");
         await loadInterests(searchInput.value.trim());
       } catch (error) {
         console.error("Error adding interest:", error);
-        showToast(
-          "Gagal menambahkan interest",
-          "Tidak dapat terhubung ke server. Silakan coba lagi.",
-          "error",
-        );
+        showToast("Gagal menambahkan interest", error.message, "error");
       } finally {
         submitButton.disabled = false;
       }

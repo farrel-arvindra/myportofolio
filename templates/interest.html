@@ -8,10 +8,10 @@
   <section
     id="interest-app"
     class="interest-section"
-    data-list-url="{% url 'main:get_interests_json' %}"
-    data-star-url-template="{% url 'main:toggle_interest_star' '00000000-0000-0000-0000-000000000000' %}"
+    data-list-url="{% url 'api:interest-list' %}"
+    data-star-url-template="{% url 'api:interest-star' '00000000-0000-0000-0000-000000000000' %}"
     data-edit-url-template="{% url 'main:update_interest' '00000000-0000-0000-0000-000000000000' %}"
-    data-delete-url-template="{% url 'main:delete_interest' '00000000-0000-0000-0000-000000000000' %}"
+    data-delete-url-template="{% url 'api:interest-detail' '00000000-0000-0000-0000-000000000000' %}"
     data-can-star="{{ can_star|yesno:'true,false' }}"
     data-can-edit="{{ can_edit_interest|yesno:'true,false' }}"
     data-can-delete="{{ can_delete_interest|yesno:'true,false' }}"
@@ -93,7 +93,7 @@
     <form
       id="interest-form"
       method="post"
-      action="{% url 'main:create_interest_ajax' %}"
+      action="{% url 'api:interest-list' %}"
       class="project-form"
     >
       {% csrf_token %}
