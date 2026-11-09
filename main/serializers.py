@@ -5,6 +5,9 @@ from main.models import Interest, Project
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Project model (Tutorial 07).
+    """
     star_count = serializers.SerializerMethodField()
     is_starred = serializers.SerializerMethodField()
     starred_by_names = serializers.SerializerMethodField()
@@ -44,6 +47,11 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class InterestSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Interest model (Individual Assignment 6).
+    Exposes only explicit public fields, strips dangerous HTML tags on input,
+    and calculates read-only star status without leaking sensitive user details.
+    """
     star_count = serializers.SerializerMethodField()
     is_starred = serializers.SerializerMethodField()
 
@@ -86,4 +94,3 @@ class InterestSerializer(serializers.ModelSerializer):
         if request is None or not request.user.is_authenticated:
             return False
         return request.user in obj.interested_users.all()
-
