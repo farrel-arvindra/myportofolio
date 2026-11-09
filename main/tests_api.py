@@ -178,14 +178,19 @@ class InterestAPITest(APITestCase):
             self.assertEqual(self.client.patch(self.detail_url, {"title": "Changed"}, format="json").status_code, 403)
             self.assertEqual(self.client.delete(self.detail_url).status_code, 403)
         self.assertEqual(Interest.objects.count(), 1)
+        self.interest.refresh_from_db()
+        self.assertEqual(self.interest.title, "Machine Learning")
 
     def test_owner_can_create_update_and_delete(self):
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(self.list_url, self.payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        created_id = response.data["id"]
+        self.assertTrue(Interest.objects.filter(pk=created_id).exists())
         response = self.client.patch(self.detail_url, {"title": "Changed"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.interest.refresh_from_db()
+        self.assertEqual(self.interest.title, "Changed")
         self.assertEqual(self.interest.description, "Models and data")
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -195,14 +200,22 @@ class InterestAPITest(APITestCase):
         self.client.force_authenticate(user=self.editor)
         response = self.client.patch(self.detail_url, {"title": "Edited"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.interest.refresh_from_db()
+        self.assertEqual(self.interest.title, "Edited")
         response = self.client.put(self.detail_url, self.payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.interest.refresh_from_db()
+        self.assertEqual(self.interest.title, "Reading")
+        # Editor cannot create new interests
         self.assertEqual(
-            self.client.post(self.list_url, self.payload, format="json").status_code,
+            self.client.post(self.list_url, {"title": "Forbidden", "description": "X"}, format="json").status_code,
             status.HTTP_403_FORBIDDEN,
         )
+        self.assertFalse(Interest.objects.filter(title="Forbidden").exists())
+        # Editor cannot delete interests
         self.assertEqual(self.client.delete(self.detail_url).status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Interest.objects.count(), 1)
+        self.assertTrue(Interest.objects.filter(pk=self.interest.id).exists())
 
     def test_validation(self):
         self.client.force_authenticate(user=self.owner)
