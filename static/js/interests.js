@@ -8,6 +8,7 @@
   const emptyState = document.getElementById("interest-empty");
   const searchForm = document.getElementById("interest-search-form");
   const searchInput = document.getElementById("interest-search-input");
+
   function getCsrfToken() {
     const cookie = document.cookie
       .split(";")
@@ -15,10 +16,10 @@
       .find((value) => value.startsWith("csrftoken="));
     if (cookie) return decodeURIComponent(cookie.slice("csrftoken=".length));
     return (
-      document.querySelector("#interest-csrf-form [name=csrfmiddlewaretoken]")
-        ?.value || ""
+      document.querySelector("[name=csrfmiddlewaretoken]")?.value || ""
     );
   }
+
   const debounceDelay = 300;
   let debounceTimer;
   let activeRequest;
@@ -39,10 +40,17 @@
   }
 
   function apiErrorMessage(data, status) {
-    const messages = Object.values(data)
-      .flat()
-      .filter((value) => typeof value === "string");
-    return messages.join(" ") || `Request failed (HTTP ${status}).`;
+    if (typeof data === "string") return data;
+    if (data && typeof data === "object") {
+      if (data.detail && typeof data.detail === "string") {
+        return data.detail;
+      }
+      const messages = Object.values(data)
+        .flat()
+        .filter((value) => typeof value === "string");
+      if (messages.length > 0) return messages.join(" ");
+    }
+    return `Permintaan gagal (status HTTP ${status}).`;
   }
 
   async function writeInterest(url, method, payload) {
@@ -66,6 +74,22 @@
       "00000000-0000-0000-0000-000000000000",
       encodeURIComponent(id),
     );
+  }
+
+  function openEditModal(item) {
+    const editModal = document.getElementById("edit-interest-modal");
+    if (!editModal) return;
+    const idInput = document.getElementById("edit-interest-id");
+    const titleInput = document.getElementById("edit-title");
+    const descInput = document.getElementById("edit-description");
+    const sinceInput = document.getElementById("edit-since");
+
+    if (idInput) idInput.value = item.id;
+    if (titleInput) titleInput.value = item.title;
+    if (descInput) descInput.value = item.description;
+    if (sinceInput) sinceInput.value = item.since ?? "";
+
+    editModal.showPopover();
   }
 
   function createInterestCard(item) {
@@ -112,11 +136,9 @@
     }
 
     if (app.dataset.canEdit === "true") {
-      const editLink = document.createElement("a");
-      editLink.className = "button button-secondary";
-      editLink.href = makeItemUrl(app.dataset.editUrlTemplate, item.id);
-      editLink.textContent = "Edit";
-      actions.append(editLink);
+      const editButton = makeButton("Edit", "button button-secondary");
+      editButton.addEventListener("click", () => openEditModal(item));
+      actions.append(editButton);
     }
 
     if (app.dataset.canDelete === "true") {
@@ -199,7 +221,7 @@
 
   document
     .getElementById("interest-retry")
-    .addEventListener("click", () => loadInterests(searchInput.value.trim()));
+    ?.addEventListener("click", () => loadInterests(searchInput.value.trim()));
 
   const interestForm = document.getElementById("interest-form");
   if (interestForm) {
@@ -210,20 +232,54 @@
 
       try {
         const fields = new FormData(interestForm);
-        const since = String(fields.get("since") ?? "").trim();
+        const sinceVal = String(fields.get("since") ?? "").trim();
         await writeInterest(app.dataset.listUrl, "POST", {
           title: fields.get("title"),
           description: fields.get("description"),
-          since: since === "" ? null : Number(since),
+          since: sinceVal === "" ? null : Number(sinceVal),
         });
 
         interestForm.reset();
-        document.getElementById("add-interest-modal").hidePopover();
+        document.getElementById("add-interest-modal")?.hidePopover();
         showToast("Berhasil", "Interest berhasil ditambahkan.", "success");
         await loadInterests(searchInput.value.trim());
       } catch (error) {
         console.error("Error adding interest:", error);
         showToast("Gagal menambahkan interest", error.message, "error");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  }
+
+  const editInterestForm = document.getElementById("edit-interest-form");
+  if (editInterestForm) {
+    editInterestForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const submitButton = editInterestForm.querySelector('[type="submit"]');
+      submitButton.disabled = true;
+
+      const id = document.getElementById("edit-interest-id").value;
+      const title = document.getElementById("edit-title").value;
+      const description = document.getElementById("edit-description").value;
+      const sinceVal = String(document.getElementById("edit-since").value ?? "").trim();
+      const since = sinceVal === "" ? null : Number(sinceVal);
+
+      const url = makeItemUrl(app.dataset.detailUrlTemplate, id);
+
+      try {
+        await writeInterest(url, "PATCH", {
+          title,
+          description,
+          since,
+        });
+
+        document.getElementById("edit-interest-modal")?.hidePopover();
+        showToast("Berhasil", "Interest berhasil diperbarui.", "success");
+        await loadInterests(searchInput.value.trim());
+      } catch (error) {
+        console.error("Error editing interest:", error);
+        showToast("Gagal memperbarui interest", error.message, "error");
       } finally {
         submitButton.disabled = false;
       }

@@ -9,6 +9,7 @@
     id="interest-app"
     class="interest-section"
     data-list-url="{% url 'api:interest-list' %}"
+    data-detail-url-template="{% url 'api:interest-detail' '00000000-0000-0000-0000-000000000000' %}"
     data-star-url-template="{% url 'api:interest-star' '00000000-0000-0000-0000-000000000000' %}"
     data-edit-url-template="{% url 'main:update_interest' '00000000-0000-0000-0000-000000000000' %}"
     data-delete-url-template="{% url 'api:interest-detail' '00000000-0000-0000-0000-000000000000' %}"
@@ -116,5 +117,60 @@
   </div>
 </div>
 {% endif %}
+
+{% if can_edit_interest %}
+<div
+  id="edit-interest-modal"
+  class="project-form-modal"
+  popover="auto"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="edit-interest-modal-title"
+>
+  <button
+    type="button"
+    class="project-form-modal__backdrop"
+    popovertarget="edit-interest-modal"
+    popovertargetaction="hide"
+    aria-label="Tutup form edit interest"
+  ></button>
+  <div class="project-form-modal__content">
+    <button
+      type="button"
+      class="project-form-modal__close"
+      popovertarget="edit-interest-modal"
+      popovertargetaction="hide"
+      aria-label="Tutup form edit interest"
+    >×</button>
+    <h2 id="edit-interest-modal-title">Edit Interest</h2>
+    <form id="edit-interest-form" class="project-form">
+      {% csrf_token %}
+      <input type="hidden" id="edit-interest-id" name="id" />
+      <div class="form-group">
+        <label for="edit-title">Nama Interest</label>
+        <input type="text" id="edit-title" name="title" class="form-control" maxlength="255" required />
+      </div>
+      <div class="form-group">
+        <label for="edit-description">Deskripsi Interest</label>
+        <textarea id="edit-description" name="description" rows="3" class="form-control" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="edit-since">Tahun Mulai</label>
+        <input type="number" id="edit-since" name="since" min="1" max="9999" class="form-control" />
+      </div>
+      <div class="project-form-modal__actions">
+        <button
+          type="button"
+          class="button button-secondary"
+          popovertarget="edit-interest-modal"
+          popovertargetaction="hide"
+        >Batal</button>
+        <button type="submit" class="button">Simpan Perubahan</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
 <script src="{% static 'js/interests.js' %}" defer></script>
 {% endblock content %}

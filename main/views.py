@@ -27,7 +27,11 @@ def user_is_editor(user):
 
 
 def can_update_model(user, model_name):
-    return user.is_superuser or user.has_perm(f"main.change_{model_name}")
+    return (
+        user.is_superuser
+        or user.has_perm(f"main.change_{model_name}")
+        or user.groups.filter(name="Editor").exists()
+    )
 
 
 def show_main(request):
