@@ -19,6 +19,10 @@ from main.serializers import InterestSerializer, ProjectSerializer
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsPortfolioOwnerOrReadOnly])
 def project_list(request):
+    """
+    List all projects (filtered optionally by ?title=) or create a new project.
+    Only superuser may create.
+    """
     if request.method in ("GET", "HEAD"):
         projects = Project.objects.prefetch_related("starred_by").order_by("title", "id")
         title = request.query_params.get("title", "").strip()
@@ -39,6 +43,10 @@ def project_list(request):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsPortfolioOwnerOrReadOnly])
 def project_detail(request, project_id):
+    """
+    Retrieve, update (PUT/PATCH), or delete a specific project by UUID.
+    Only superuser may update or delete.
+    """
     project = get_object_or_404(
         Project.objects.prefetch_related("starred_by"), pk=project_id,
     )
@@ -63,6 +71,9 @@ def project_detail(request, project_id):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def project_star(request, project_id):
+    """
+    Toggle star status for the authenticated user on a project.
+    """
     project = get_object_or_404(Project, pk=project_id)
     if project.starred_by.filter(pk=request.user.pk).exists():
         project.starred_by.remove(request.user)
@@ -76,6 +87,10 @@ def project_star(request, project_id):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsPortfolioOwnerOrEditorOrReadOnly])
 def interest_list(request):
+    """
+    List all interests (filtered optionally by ?title=) or create a new interest.
+    Creation (POST) is restricted to portfolio owner (superuser).
+    """
     if request.method in ("GET", "HEAD"):
         interests = Interest.objects.prefetch_related("interested_users").order_by("title", "id")
         title = request.query_params.get("title", "").strip()
@@ -96,6 +111,12 @@ def interest_list(request):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsPortfolioOwnerOrEditorOrReadOnly])
 def interest_detail(request, interest_id):
+    """
+    Retrieve, update (PUT/PATCH), or delete an interest by UUID.
+    - Safe methods (GET, HEAD): all visitors.
+    - PUT / PATCH: Editors and Superuser.
+    - DELETE: Superuser only.
+    """
     interest = get_object_or_404(
         Interest.objects.prefetch_related("interested_users"), pk=interest_id,
     )
@@ -120,6 +141,9 @@ def interest_detail(request, interest_id):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def interest_star(request, interest_id):
+    """
+    Toggle star status for the authenticated user on an interest.
+    """
     interest = get_object_or_404(Interest, pk=interest_id)
     if interest.interested_users.filter(pk=request.user.pk).exists():
         interest.interested_users.remove(request.user)
@@ -127,4 +151,3 @@ def interest_star(request, interest_id):
         interest.interested_users.add(request.user)
     serializer = InterestSerializer(interest, context={"request": request})
     return Response(serializer.data)
-
